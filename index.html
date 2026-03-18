@@ -8,7 +8,25 @@
   <title>Curve Rush</title>
   <meta name="description" content="Curve Rush: Speed down and launch into the sky! Master the slopes, land smoothly, and go for insane air tricks in this addicting sand-riding game.">
 
-  <style type="text/css">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      overflow: hidden;
+    }
+    #unity-container {
+      width: 100%;
+      height: 100%;
+    }
+    #unity-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      background: #000;
+    }
     .jss1:before {
       top: 0;
       width: 100%;
@@ -27,15 +45,18 @@
 
 <body>
   <!-- Unity container -->
-  <div id="unity-container" style="display: none;">
+  <div id="unity-container" style="display:none;">
     <canvas id="unity-canvas"></canvas>
   </div>
 
   <!-- Loading screen -->
   <div id="loadingBlock">
     <div class="jss31 jss34 jss1">
-      <div style="position: absolute; font-family: Arial, Helvetica, sans-serif; bottom: 10px; right: 10px; font-size: 18px; color: #ffffff; opacity: 0.5;">25030705</div>
+      <div style="position: absolute; font-family: Arial, Helvetica, sans-serif; bottom: 10px; right: 10px; font-size: 18px; color: #ffffff; opacity: 0.5;">
+        25030705
+      </div>
       <div class="spinner"></div>
+
       <div class="jss31 jss34 jss48" style="flex: 1 1 0%;">
         <div class="jss32">
           <div class="jss7 jss9 jss20 jss3">
@@ -47,6 +68,7 @@
           </div>
         </div>
       </div>
+
       <div class="jss31 jss34" style="flex: 3 1 0%;">
         <div class="jss32">
           <div class="jss31 jss34 jss39 jss50 gameloader">
@@ -69,6 +91,7 @@
           </div>
         </div>
       </div>
+
     </div>
   </div>
 
@@ -85,13 +108,8 @@
       companyName: "1games.io",
       productName: "Curve Rush",
       productVersion: "25030705",
-      pubId: "",
-      hostindex: 2,
-      gameId: "curve-rush",
-      eventLog: true,
-      buildAPI: "https://event.azgame.io/apiaz/event",
-      enableMoreGame: "yes",
-      enablePromotion: true
+      // optional but often used:
+      devicePixelRatio: 1,
     };
 
     const progressElement = document.getElementById('progress_fill');
@@ -100,35 +118,42 @@
     const loadingBar = document.getElementById("loadingBlock");
     const progress_text = document.querySelector(".gameloader-progress-info");
 
-    // --- Clear Unity IndexedDB cache (avoid c.cacheControl error) ---
-    if (typeof indexedDB !== "undefined") {
-      try { indexedDB.deleteDatabase("UnityCache"); } catch(e) { console.warn("Could not clear Unity cache", e); }
-    }
-
     // --- Load Unity Loader ---
     const script = document.createElement("script");
     script.src = loaderUrl;
+
     script.onload = () => {
+      console.log("Loader loaded:", loaderUrl);
+
       if (typeof createUnityInstance !== "function") {
-        alert("Failed to load Unity. Check that all Build files exist on GitHub.");
+        console.error("createUnityInstance is not defined. Loader script did not initialize correctly.");
+        progress_text.innerText = "Failed to start Unity loader.";
         return;
       }
+
       createUnityInstance(canvas, config, (progress) => {
-        progressElement.style.width = (progress * 100) + "%";
-        progress_text.innerText = "Downloading file: " + Math.round(progress * 100) + "%";
+        const pct = Math.round(progress * 100);
+        progressElement.style.width = pct + "%";
+        progress_text.innerText = "Loading: " + pct + "%";
         if (progress >= 0.99) progress_text.innerText = "Finalizing...";
       }).then((unityInstance) => {
         window.unityInstance = unityInstance;
         loadingBar.style.display = "none";
         container.style.display = "block";
-        window.focus();
+        console.log("Unity loaded successfully.");
       }).catch((err) => {
-        alert("Unity loading error: " + err);
+        console.error("Unity loading error:", err);
+        progress_text.innerText = "Unity error: " + err;
+        // show canvas anyway so you can see if it's just rendering black
+        container.style.display = "block";
       });
     };
+
     script.onerror = () => {
-      alert("Failed to load loader script. Make sure 'curve-rush-v25030705.loader.js' exists on GitHub Pages.");
+      console.error("Failed to load loader script:", loaderUrl);
+      progress_text.innerText = "Failed to load loader script.";
     };
+
     document.body.appendChild(script);
   </script>
 
@@ -137,6 +162,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-analytics-compat.js"></script>
+
   <script type="module">
     const firebaseConfig = {
       apiKey: "AIzaSyC2Q-lcEJc72-X-g6okDIPPYSwS2kS5ARE",
@@ -147,7 +173,8 @@
       appId: "1:565813985587:web:233ae9bbe95c8489527e46",
       measurementId: "G-7HV2QGKCTR"
     };
-    if(firebaseConfig) {
+
+    if (firebaseConfig) {
       window.dataLayer = window.dataLayer || [];
       window.gtag = function () { window.dataLayer.push(arguments); }
       window.gtag("config", firebaseConfig.measurementId, {
@@ -166,7 +193,7 @@
     let time_counter_gm = 0;
     function gmRepeatEvery30Seconds() {
       setInterval(() => {
-        if(config.eventLog) firebaseLogEvent("time_countergm_" + time_counter_gm++);
+        if (config.eventLog) firebaseLogEvent("time_countergm_" + time_counter_gm++);
       }, 30000);
     }
     gmRepeatEvery30Seconds();
