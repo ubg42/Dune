@@ -23,37 +23,6 @@
       background-image: url("25030705/loading.png");
     }
   </style> 
-
-  <script>
-    // --- Paths ---
-    var baseUrl = "./";
-    var versionFolder = "25030705/";
-    var buildUrl = baseUrl + versionFolder + "Build";
-
-    var loaderUrl = buildUrl + "/curve-rush-v25030705.loader.js";
-
-    var config = {
-      dataUrl: buildUrl + "/curve-rush-v25030705.data.unityweb",
-      frameworkUrl: buildUrl + "/curve-rush-v25030705.framework.js.unityweb",
-      codeUrl: buildUrl + "/curve-rush-v25030705.wasm.unityweb",
-      streamingAssetsUrl: baseUrl + versionFolder + "StreamingAssets",
-      companyName: "1games.io",
-      productName: "Curve Rush",
-      productVersion: "25030705",
-      pubId: ""
-    };
-
-    // Optional config
-    config.hostindex = 2;
-    config.gameId = "curve-rush";
-    config.eventLog = true;
-    config.buildAPI = "https://event.azgame.io/apiaz/event";
-    let currentDate = new Date();
-    let endLogDate = new Date("2025-04-14T08:58:22.933Z");
-    if (currentDate > endLogDate) config.eventLog = false;
-    config.enableMoreGame = "yes";
-    config.enablePromotion = true;
-  </script>
 </head>
 
 <body>
@@ -103,29 +72,64 @@
     </div>
   </div>
 
-  <!-- Load Unity game -->
   <script>
-    var progressElement = document.getElementById('progress_fill');
-    var container = document.getElementById("unity-container");
-    var canvas = document.getElementById("unity-canvas");
-    var loadingBar = document.getElementById("loadingBlock");
-    var progress_text = document.querySelector(".gameloader-progress-info");
+    // --- Paths ---
+    const baseUrl = "./";
+    const versionFolder = "25030705/";
+    const buildFolder = "Build/";
+    const buildUrl = baseUrl + versionFolder + buildFolder;
+    const loaderUrl = buildUrl + "curve-rush-v25030705.loader.js";
 
-    var script = document.createElement("script");
+    const config = {
+      dataUrl: buildUrl + "curve-rush-v25030705.data.unityweb",
+      frameworkUrl: buildUrl + "curve-rush-v25030705.framework.js.unityweb",
+      codeUrl: buildUrl + "curve-rush-v25030705.wasm.unityweb",
+      streamingAssetsUrl: baseUrl + versionFolder + "StreamingAssets",
+      companyName: "1games.io",
+      productName: "Curve Rush",
+      productVersion: "25030705",
+      pubId: "",
+      hostindex: 2,
+      gameId: "curve-rush",
+      eventLog: true,
+      buildAPI: "https://event.azgame.io/apiaz/event",
+      enableMoreGame: "yes",
+      enablePromotion: true
+    };
+
+    const currentDate = new Date();
+    const endLogDate = new Date("2025-04-14T08:58:22.933Z");
+    if (currentDate > endLogDate) config.eventLog = false;
+
+    const progressElement = document.getElementById('progress_fill');
+    const container = document.getElementById("unity-container");
+    const canvas = document.getElementById("unity-canvas");
+    const loadingBar = document.getElementById("loadingBlock");
+    const progress_text = document.querySelector(".gameloader-progress-info");
+
+    // --- Load Unity Loader ---
+    const script = document.createElement("script");
     script.src = loaderUrl;
     script.onload = () => {
+      if (typeof createUnityInstance !== "function") {
+        alert("Failed to load Unity. Please check the Build files.");
+        return;
+      }
       createUnityInstance(canvas, config, (progress) => {
-        progressElement.style.width = 100 * progress + "%";
+        progressElement.style.width = (progress * 100) + "%";
         progress_text.innerText = "Downloading file: " + Math.round(progress * 100) + "%";
-        if (progress >= 99) progress_text.innerText = "Game Loading ...";
+        if (progress >= 0.99) progress_text.innerText = "Finalizing...";
       }).then((unityInstance) => {
         window.unityInstance = unityInstance;
-        setTimeout(() => {
-          loadingBar.style.display = "none";
-          window.focus();
-        }, 2000);
+        loadingBar.style.display = "none";
         container.style.display = "block";
-      }).catch((message) => { alert(message); });
+        window.focus();
+      }).catch((err) => {
+        alert("Unity loading error: " + err);
+      });
+    };
+    script.onerror = () => {
+      alert("Failed to load loader script. Make sure 'curve-rush-v25030705.loader.js' exists in 25030705/Build/");
     };
     document.body.appendChild(script);
   </script>
@@ -145,7 +149,6 @@
       appId: "1:565813985587:web:233ae9bbe95c8489527e46",
       measurementId: "G-7HV2QGKCTR"
     };
-
     if(firebaseConfig) {
       window.dataLayer = window.dataLayer || [];
       window.gtag = function () { window.dataLayer.push(arguments); }
@@ -153,7 +156,7 @@
         cookie_domain: window.location.hostname,
         cookie_flags: "SameSite=None;Secure",
       });
-      const app = firebase.initializeApp(firebaseConfig);
+      firebase.initializeApp(firebaseConfig);
     }
   </script>
 
