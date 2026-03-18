@@ -2,8 +2,8 @@
 <html lang="en-us">
 <head>
   <meta charset="utf-8">
-  <title>Curve Rush</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Curve Rush</title>
 
   <style>
     html, body {
@@ -13,96 +13,68 @@
       height: 100%;
       background: #000;
       overflow: hidden;
-      font-family: Arial, sans-serif;
-      color: #fff;
     }
-    #unity-container {
-      width: 100%;
-      height: 100%;
-    }
-    #unity-canvas {
+    #unity-container, #unity-canvas {
       width: 100%;
       height: 100%;
       display: block;
       background: #000;
     }
-    #log {
-      position: fixed;
-      left: 0;
-      bottom: 0;
-      width: 100%;
-      max-height: 40%;
-      overflow-y: auto;
-      background: rgba(0,0,0,0.8);
-      font-size: 12px;
-      padding: 4px 8px;
-      box-sizing: border-box;
-      white-space: pre-wrap;
-    }
   </style>
 </head>
+
 <body>
-  <div id="unity-container">
+  <div id="unity-container" style="display:none;">
     <canvas id="unity-canvas"></canvas>
   </div>
-  <div id="log"></div>
+
+  <div id="loadingBlock" style="color:white;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:sans-serif;">
+    Loading...
+  </div>
 
   <script>
-    const logBox = document.getElementById('log');
-    function log(msg) {
-      console.log(msg);
-      logBox.textContent += msg + "\n";
-    }
-
-    const buildUrl  = "https://ubg42.github.io/Dune/25030705/Build/";
+    const buildUrl = "https://ubg42.github.io/Dune/25030705/Build/";
     const loaderUrl = buildUrl + "curve-rush-v25030705.loader.js";
 
     const config = {
-      dataUrl:       buildUrl + "curve-rush-v25030705.data.unityweb",
-      frameworkUrl:  buildUrl + "curve-rush-v25030705.framework.js.unityweb",
-      codeUrl:       buildUrl + "curve-rush-v25030705.wasm.unityweb",
+      dataUrl: buildUrl + "curve-rush-v25030705.data.unityweb",
+      frameworkUrl: buildUrl + "curve-rush-v25030705.framework.js.unityweb",
+      codeUrl: buildUrl + "curve-rush-v25030705.wasm.unityweb",
       streamingAssetsUrl: "https://ubg42.github.io/Dune/25030705/StreamingAssets",
-      companyName:   "1games.io",
-      productName:   "Curve Rush",
-      productVersion:"25030705",
+      companyName: "1games.io",
+      productName: "Curve Rush",
+      productVersion: "25030705",
       devicePixelRatio: 1
     };
 
     const canvas = document.getElementById("unity-canvas");
+    const container = document.getElementById("unity-container");
+    const loading = document.getElementById("loadingBlock");
 
-    // 1) Load loader script
     const script = document.createElement("script");
     script.src = loaderUrl;
 
     script.onload = () => {
-      log("Loader loaded: " + loaderUrl);
-
       if (typeof createUnityInstance !== "function") {
-        log("ERROR: createUnityInstance is not defined. The loader did not initialize.");
+        loading.innerText = "Unity loader failed.";
         return;
       }
 
-      // 2) Start Unity
       createUnityInstance(canvas, config, (progress) => {
-        log("Progress: " + Math.round(progress * 100) + "%");
-      }).then((unityInstance) => {
-        log("Unity loaded successfully.");
-        window.unityInstance = unityInstance;
-      }).catch((err) => {
-        log("Unity loading error: " + err);
+        loading.innerText = "Loading " + Math.round(progress * 100) + "%";
+      }).then(() => {
+        loading.style.display = "none";
+        container.style.display = "block";
+      }).catch(err => {
+        loading.innerText = "Unity error: " + err;
       });
     };
 
     script.onerror = () => {
-      log("ERROR: Failed to load loader script: " + loaderUrl);
+      loading.innerText = "Loader file missing.";
     };
 
     document.body.appendChild(script);
-
-    // Catch any runtime errors
-    window.addEventListener("error", e => {
-      log("JS ERROR: " + e.message);
-    });
   </script>
 </body>
 </html>
