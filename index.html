@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <link rel="stylesheet" href="25030705/theme/game.css">
+  <link rel="stylesheet" href="https://ubg42.github.io/Dune/25030705/theme/game.css">
   <link rel="canonical" href="https://ubg42.github.io/Dune/">
   <title>Curve Rush</title>
   <meta name="description" content="Curve Rush: Speed down and launch into the sky! Master the slopes, land smoothly, and go for insane air tricks in this addicting sand-riding game.">
@@ -20,7 +20,7 @@
       z-index: 0;
       position: absolute;
       background-size: cover;
-      background-image: url("25030705/loading.png");
+      background-image: url("https://ubg42.github.io/Dune/25030705/loading.png");
     }
   </style> 
 </head>
@@ -41,7 +41,7 @@
           <div class="jss7 jss9 jss20 jss3">
             <div class="jss125">
               <div class="jss123">
-                <img src="25030705/logo.png">
+                <img src="https://ubg42.github.io/Dune/25030705/logo.png">
               </div>
             </div>
           </div>
@@ -55,7 +55,7 @@
             </div>
             <div class="jss32">
               <div class="jss32 gameloader-logo">
-                <img id="game-logo" src="25030705/loading.png">
+                <img id="game-logo" src="https://ubg42.github.io/Dune/25030705/loading.png">
               </div>
             </div>
             <div class="jss32">
@@ -73,18 +73,15 @@
   </div>
 
   <script>
-    // --- Paths ---
-    const baseUrl = "./";
-    const versionFolder = "25030705/";
-    const buildFolder = "Build/";
-    const buildUrl = baseUrl + versionFolder + buildFolder;
+    // --- Absolute URLs for GitHub Pages ---
+    const buildUrl = "https://ubg42.github.io/Dune/25030705/Build/";
     const loaderUrl = buildUrl + "curve-rush-v25030705.loader.js";
 
     const config = {
       dataUrl: buildUrl + "curve-rush-v25030705.data.unityweb",
       frameworkUrl: buildUrl + "curve-rush-v25030705.framework.js.unityweb",
       codeUrl: buildUrl + "curve-rush-v25030705.wasm.unityweb",
-      streamingAssetsUrl: baseUrl + versionFolder + "StreamingAssets",
+      streamingAssetsUrl: "https://ubg42.github.io/Dune/25030705/StreamingAssets",
       companyName: "1games.io",
       productName: "Curve Rush",
       productVersion: "25030705",
@@ -97,10 +94,6 @@
       enablePromotion: true
     };
 
-    const currentDate = new Date();
-    const endLogDate = new Date("2025-04-14T08:58:22.933Z");
-    if (currentDate > endLogDate) config.eventLog = false;
-
     const progressElement = document.getElementById('progress_fill');
     const container = document.getElementById("unity-container");
     const canvas = document.getElementById("unity-canvas");
@@ -112,7 +105,7 @@
     script.src = loaderUrl;
     script.onload = () => {
       if (typeof createUnityInstance !== "function") {
-        alert("Failed to load Unity. Please check the Build files.");
+        alert("Failed to load Unity. Check that all Build files exist on GitHub.");
         return;
       }
       createUnityInstance(canvas, config, (progress) => {
@@ -129,7 +122,7 @@
       });
     };
     script.onerror = () => {
-      alert("Failed to load loader script. Make sure 'curve-rush-v25030705.loader.js' exists in 25030705/Build/");
+      alert("Failed to load loader script. Make sure 'curve-rush-v25030705.loader.js' exists on GitHub Pages.");
     };
     document.body.appendChild(script);
   </script>
