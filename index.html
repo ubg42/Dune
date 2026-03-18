@@ -34,19 +34,23 @@
                             }
                         }
 
-var baseUrl = "https://ubg42.github.io/Dune/";
-buildUrl = baseUrl + versionFolder + buildUrl;	
-		var loaderUrl = buildUrl + "/curve-rush-v25030705.loader.js";
-		var config = {
-			dataUrl: buildUrl + "/curve-rush-v25030705.data.unityweb",
-			frameworkUrl: buildUrl + "/curve-rush-v25030705.framework.js.unityweb",
-			codeUrl: buildUrl + "/curve-rush-v25030705.wasm.unityweb",
-			streamingAssetsUrl: versionFolder+"StreamingAssets",
-			companyName: "1games.io",
-			productName: "Curve Rush",
-			productVersion: "25030705",
-			pubId: ""
-		};
+var baseUrl = "./";
+var versionFolder = "25030705/";
+
+var buildUrl = baseUrl + versionFolder + "Build";
+
+var loaderUrl = buildUrl + "/curve-rush-v25030705.loader.js";
+
+var config = {
+    dataUrl: buildUrl + "/curve-rush-v25030705.data.unityweb",
+    frameworkUrl: buildUrl + "/curve-rush-v25030705.framework.js.unityweb",
+    codeUrl: buildUrl + "/curve-rush-v25030705.wasm.unityweb",
+    streamingAssetsUrl: baseUrl + versionFolder + "StreamingAssets",
+    companyName: "1games.io",
+    productName: "Curve Rush",
+    productVersion: "25030705",
+    pubId: ""
+};
 		config.hostindex = 2;
 		config.gameId = "curve-rush";
 		config.eventLog=true;
