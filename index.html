@@ -8,6 +8,9 @@
   <title>Curve Rush</title>
   <meta name="description" content="Curve Rush: Speed down and launch into the sky! Master the slopes, land smoothly, and go for insane air tricks in this addicting sand-riding game.">
 
+  <!-- Google Fonts for Fredoka -->
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
+
   <style type="text/css">
     .jss1:before {
       top: 0;
@@ -21,6 +24,9 @@
       position: absolute;
       background-size: cover;
       background-image: url("https://ubg42.github.io/Dune/25030705/loading.png");
+    }
+    body, .gameloader-game-name, .gameloader-progress-info {
+      font-family: 'Fredoka One', Arial, sans-serif;
     }
   </style> 
 </head>
@@ -91,7 +97,9 @@
       eventLog: true,
       buildAPI: "https://event.azgame.io/apiaz/event",
       enableMoreGame: "yes",
-      enablePromotion: true
+      enablePromotion: true,
+      // Disable IndexedDB caching to prevent black screen
+      cacheControl: { cacheEnabled: false }
     };
 
     const progressElement = document.getElementById('progress_fill');
