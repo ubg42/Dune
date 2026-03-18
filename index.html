@@ -2,11 +2,8 @@
 <html lang="en-us">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <link rel="stylesheet" href="https://ubg42.github.io/Dune/25030705/theme/game.css">
-  <link rel="canonical" href="https://ubg42.github.io/Dune/">
   <title>Curve Rush</title>
-  <meta name="description" content="Curve Rush: Speed down and launch into the sky! Master the slopes, land smoothly, and go for insane air tricks in this addicting sand-riding game.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 
   <style>
     html, body {
@@ -16,6 +13,8 @@
       height: 100%;
       background: #000;
       overflow: hidden;
+      font-family: Arial, sans-serif;
+      color: #fff;
     }
     #unity-container {
       width: 100%;
@@ -27,176 +26,83 @@
       display: block;
       background: #000;
     }
-    .jss1:before {
-      top: 0;
+    #log {
+      position: fixed;
+      left: 0;
+      bottom: 0;
       width: 100%;
-      filter: blur(16px);
-      height: 100%;
-      content: "";
-      display: block;
-      opacity: .5;
-      z-index: 0;
-      position: absolute;
-      background-size: cover;
-      background-image: url("https://ubg42.github.io/Dune/25030705/loading.png");
+      max-height: 40%;
+      overflow-y: auto;
+      background: rgba(0,0,0,0.8);
+      font-size: 12px;
+      padding: 4px 8px;
+      box-sizing: border-box;
+      white-space: pre-wrap;
     }
   </style>
 </head>
-
 <body>
-  <!-- Unity container -->
-  <div id="unity-container" style="display:none;">
+  <div id="unity-container">
     <canvas id="unity-canvas"></canvas>
   </div>
-
-  <!-- Loading screen -->
-  <div id="loadingBlock">
-    <div class="jss31 jss34 jss1">
-      <div style="position: absolute; font-family: Arial, Helvetica, sans-serif; bottom: 10px; right: 10px; font-size: 18px; color: #ffffff; opacity: 0.5;">
-        25030705
-      </div>
-      <div class="spinner"></div>
-
-      <div class="jss31 jss34 jss48" style="flex: 1 1 0%;">
-        <div class="jss32">
-          <div class="jss7 jss9 jss20 jss3">
-            <div class="jss125">
-              <div class="jss123">
-                <img src="https://ubg42.github.io/Dune/25030705/logo.png">
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="jss31 jss34" style="flex: 3 1 0%;">
-        <div class="jss32">
-          <div class="jss31 jss34 jss39 jss50 gameloader">
-            <div class="jss32">
-              <div class="gameloader-game-name">Curve Rush</div>
-            </div>
-            <div class="jss32">
-              <div class="jss32 gameloader-logo">
-                <img id="game-logo" src="https://ubg42.github.io/Dune/25030705/loading.png">
-              </div>
-            </div>
-            <div class="jss32">
-              <div>
-                <div class="gameloader-progressbar">
-                  <div class="gameloader-progressbar-progress" id="progress_fill" style="width: 0%;"></div>
-                </div>
-                <div class="gameloader-progress-info">Game Loading...</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
+  <div id="log"></div>
 
   <script>
-    // --- Absolute URLs for GitHub Pages ---
-    const buildUrl = "https://ubg42.github.io/Dune/25030705/Build/";
+    const logBox = document.getElementById('log');
+    function log(msg) {
+      console.log(msg);
+      logBox.textContent += msg + "\n";
+    }
+
+    const buildUrl  = "https://ubg42.github.io/Dune/25030705/Build/";
     const loaderUrl = buildUrl + "curve-rush-v25030705.loader.js";
 
     const config = {
-      dataUrl: buildUrl + "curve-rush-v25030705.data.unityweb",
-      frameworkUrl: buildUrl + "curve-rush-v25030705.framework.js.unityweb",
-      codeUrl: buildUrl + "curve-rush-v25030705.wasm.unityweb",
+      dataUrl:       buildUrl + "curve-rush-v25030705.data.unityweb",
+      frameworkUrl:  buildUrl + "curve-rush-v25030705.framework.js.unityweb",
+      codeUrl:       buildUrl + "curve-rush-v25030705.wasm.unityweb",
       streamingAssetsUrl: "https://ubg42.github.io/Dune/25030705/StreamingAssets",
-      companyName: "1games.io",
-      productName: "Curve Rush",
-      productVersion: "25030705",
-      // optional but often used:
-      devicePixelRatio: 1,
+      companyName:   "1games.io",
+      productName:   "Curve Rush",
+      productVersion:"25030705",
+      devicePixelRatio: 1
     };
 
-    const progressElement = document.getElementById('progress_fill');
-    const container = document.getElementById("unity-container");
     const canvas = document.getElementById("unity-canvas");
-    const loadingBar = document.getElementById("loadingBlock");
-    const progress_text = document.querySelector(".gameloader-progress-info");
 
-    // --- Load Unity Loader ---
+    // 1) Load loader script
     const script = document.createElement("script");
     script.src = loaderUrl;
 
     script.onload = () => {
-      console.log("Loader loaded:", loaderUrl);
+      log("Loader loaded: " + loaderUrl);
 
       if (typeof createUnityInstance !== "function") {
-        console.error("createUnityInstance is not defined. Loader script did not initialize correctly.");
-        progress_text.innerText = "Failed to start Unity loader.";
+        log("ERROR: createUnityInstance is not defined. The loader did not initialize.");
         return;
       }
 
+      // 2) Start Unity
       createUnityInstance(canvas, config, (progress) => {
-        const pct = Math.round(progress * 100);
-        progressElement.style.width = pct + "%";
-        progress_text.innerText = "Loading: " + pct + "%";
-        if (progress >= 0.99) progress_text.innerText = "Finalizing...";
+        log("Progress: " + Math.round(progress * 100) + "%");
       }).then((unityInstance) => {
+        log("Unity loaded successfully.");
         window.unityInstance = unityInstance;
-        loadingBar.style.display = "none";
-        container.style.display = "block";
-        console.log("Unity loaded successfully.");
       }).catch((err) => {
-        console.error("Unity loading error:", err);
-        progress_text.innerText = "Unity error: " + err;
-        // show canvas anyway so you can see if it's just rendering black
-        container.style.display = "block";
+        log("Unity loading error: " + err);
       });
     };
 
     script.onerror = () => {
-      console.error("Failed to load loader script:", loaderUrl);
-      progress_text.innerText = "Failed to load loader script.";
+      log("ERROR: Failed to load loader script: " + loaderUrl);
     };
 
     document.body.appendChild(script);
-  </script>
 
-  <!-- Firebase Analytics -->
-  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-analytics-compat.js"></script>
-
-  <script type="module">
-    const firebaseConfig = {
-      apiKey: "AIzaSyC2Q-lcEJc72-X-g6okDIPPYSwS2kS5ARE",
-      authDomain: "curve-rush-1games.firebaseapp.com",
-      projectId: "curve-rush-1games",
-      storageBucket: "curve-rush-1games.firebasestorage.app",
-      messagingSenderId: "565813985587",
-      appId: "1:565813985587:web:233ae9bbe95c8489527e46",
-      measurementId: "G-7HV2QGKCTR"
-    };
-
-    if (firebaseConfig) {
-      window.dataLayer = window.dataLayer || [];
-      window.gtag = function () { window.dataLayer.push(arguments); }
-      window.gtag("config", firebaseConfig.measurementId, {
-        cookie_domain: window.location.hostname,
-        cookie_flags: "SameSite=None;Secure",
-      });
-      firebase.initializeApp(firebaseConfig);
-    }
-  </script>
-
-  <script>
-    function firebaseSetUserProperties(props) { firebase.analytics().setUserProperties(props); }
-    function firebaseLogEvent(event_name) { firebase.analytics().logEvent(event_name); }
-    function firebaseLogEventParameter(event_name, event_param) { firebase.analytics().logEvent(event_name, event_param); }
-
-    let time_counter_gm = 0;
-    function gmRepeatEvery30Seconds() {
-      setInterval(() => {
-        if (config.eventLog) firebaseLogEvent("time_countergm_" + time_counter_gm++);
-      }, 30000);
-    }
-    gmRepeatEvery30Seconds();
+    // Catch any runtime errors
+    window.addEventListener("error", e => {
+      log("JS ERROR: " + e.message);
+    });
   </script>
 </body>
 </html>
